@@ -21,7 +21,7 @@ This README focuses on the programming solutions, particularly our implementatio
 
 ## Core Achievement: Hybrid Golay & Hamming Code
 
-The most significant part of our solution was a robust hybrid coding scheme designed for a channel that could introduce up to **10 random bit errors** in a **100-bit message**. Our full implementation, including the encoder, decoder, and syndrome lookup table, can be found in `day 3/Golay_implementation.ipynb`.
+The most significant part of our solution was a robust hybrid coding scheme designed for a channel that could introduce up to **10 random bit errors** in a **100-bit message**. Our full implementation, including the encoder, decoder, and syndrome lookup table, can be found in<br> `day 3/Golay_implementation.ipynb`.
 
 ### The Challenge
 
