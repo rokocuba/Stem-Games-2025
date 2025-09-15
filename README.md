@@ -37,7 +37,7 @@ We partitioned the 100-bit message and applied the best available code for each 
 
 This results in a final message of `(8 * 24) + 7 = 199` bits being sent through the channel.
 
-### Implementation Details (`Golay_implementation.ipynb`)
+### Implementation Details (`day 3/Golay_implementation.ipynb`)
 
 Our Python implementation in the Jupyter Notebook handles the entire process:
 
