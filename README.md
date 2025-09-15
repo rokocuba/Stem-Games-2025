@@ -1,4 +1,4 @@
-# Winning Solution for STEM GAMES – M Arena
+# Winning Solution - STEM Games 2025 M Arena
 
 **Team:**
 *   Roko Čubrić
@@ -10,58 +10,60 @@
 
 ---
 
-## About the Competition
+## Project Overview
 
-STEM Games is a student competition that gives students from STEM fields (Science, Technology, Engineering, and Mathematics) an opportunity to showcase their knowledge and skills in solving real-world engineering problems. The Math Arena (M Arena) is specifically focused on mathematical modeling and computational problem-solving.
+This repository contains the winning solutions for the M Arena at STEM Games 2025. The competition was divided into theoretical and programming tasks rooted in information theory and error-correcting codes.
 
-## Project Summary
+*   **Theoretical Tasks:** Required the mathematical derivation of formulas related to channel capacity, entropy, and coding theory.
+*   **Programming Tasks:** Involved designing and implementing custom error-correcting codes for several "exotic" communication channels, each with unique error characteristics.
 
-This repository contains the winning solution for the M Arena competition at STEM Games. The project addresses the critical problem of data protection in digital communication channels, with a special focus on its application in banking transactions. Our team developed a comprehensive solution that leverages advanced error correction coding techniques to ensure the integrity and reliability of data throughout the transaction process.
+This README focuses on the programming solutions, particularly our implementation of a hybrid Golay-Hamming code.
 
-## Core Concepts
+## Core Achievement: Hybrid Golay & Hamming Code
 
-Our solution is grounded in information and coding theory, utilizing fundamental concepts such as entropy, channel coding, and perfect codes.
+The most significant part of our solution was a robust hybrid coding scheme designed for a channel that could introduce up to **10 random bit errors** in a **100-bit message**. Our full implementation, including the encoder, decoder, and syndrome lookup table, can be found in `Golay_implementation.ipynb`.
 
-### Entropy as a Measure of Information
+### The Challenge
 
-Entropy is a key concept in information theory that quantifies the amount of uncertainty or information in a data source. We used entropy as a foundational measure to analyze the characteristics of the communication channel and the information being transmitted.
+The task was to devise a protective code for a 100-bit message. The channel's noise was significant, capable of flipping up to 10 bits in the original message. A simple, single coding scheme was unlikely to be efficient or effective enough.
 
-### Error Correction Codes
+### Our Solution: A Hybrid Approach
 
-To protect data from errors caused by noise and interference in the channel, we implemented a multi-layered coding strategy.
+We partitioned the 100-bit message and applied the best available code for each segment's size.
 
-*   **Hamming Codes:** These are a class of linear error-correcting codes capable of detecting up to two-bit errors or correcting one-bit errors. We designated their use for protecting data at rest, such as on SSDs and HDDs.
-*   **Golay Codes:** The Golay code is a type of perfect code known for its powerful error-correcting capabilities. In our solution, we used the binary Golay code as part of a strategy to protect a 100-bit data block.
-*   **Reed-Solomon Codes:** These codes are exceptionally effective at correcting burst errors (i.e., a sequence of consecutive bit errors). This makes them ideal for a wide range of applications, including:
-    *   CDs/DVDs (correcting scratches)
-    *   QR Codes (reading damaged codes)
-    *   NASA Deep Space Communication (overcoming cosmic noise)
-    *   DVB-S2 (satellite TV)
+1.  The 100-bit message is split into **eight 12-bit blocks** and **one 4-bit block**.
+2.  Each of the eight 12-bit blocks is encoded using the **Extended Binary Golay Code [24, 12, 8]**.
+3.  The final 4-bit block is encoded using the **Hamming Code [7, 4, 3]**.
 
-## Application in Banking Transactions
+This results in a final message of `(8 * 24) + 7 = 199` bits being sent through the channel.
 
-We analyzed a typical banking transaction to identify critical points where data integrity is at risk.
+### Implementation Details (`Golay_implementation.ipynb`)
 
-#### Transaction Stages:
-1.  **Initialization:** Starting the transaction.
-2.  **Validation & Authorization:** Verifying credentials and funds.
-3.  **Database Processing:** Committing the transaction to the ledger.
-4.  **Confirmation & Completion:** Finalizing the transaction.
+Our Python implementation in the Jupyter Notebook handles the entire process:
 
-#### Potential Physical Layer Errors:
-*   **Bit-flips (Single Event Upset - SEU):** Spontaneous bit changes caused by radiation or interference.
-*   **Network Infrastructure Failures:** Errors during data transmission.
-*   **Data Storage Failures (SSD/HDD):** Bit rot or corruption of data at rest.
-*   **Hardware Security Module (HSM) Issues:** Errors within the secure processing hardware.
+*   **Matrices:** Defines the generator and parity-check matrices for both the Golay `G(24,12)` and Hamming `H(7,4)` codes.
+*   **Syndrome Hash Map:** A key feature is the `return_syndrome_hash_map` function. It pre-calculates the error pattern corresponding to every possible syndrome for the given code. This creates a highly efficient lookup table (a dictionary in Python) that allows for near-instantaneous decoding.
+    *   The Golay code has a minimum distance of 8, allowing it to correct any combination of up to `floor((8-1)/2) = 3` errors within its 24-bit block.
+    *   The Hamming code has a minimum distance of 3, allowing it to correct any single-bit error within its 7-bit block.
+*   **Encoder (`ENCODE_CHANNEL_MESSAGE`):** Takes a 100-bit message, performs the 8+1 block split, and encodes each block using the appropriate generator matrix.
+*   **Decoder (`DECODE_CHANNEL_MESSAGE`):** Takes the 199-bit received message, splits it back into encoded blocks, calculates the syndrome for each, and uses the pre-computed hash map to find and flip the erroneous bits, thereby correcting the message.
 
-## The Proposed Solution
+## Additional Solution: 2D Parity Code
 
-Our solution is a hybrid error correction system tailored to protect different parts of the transaction lifecycle. The ultimate goal is to achieve maximum **efficiency** by ensuring both the **speed** and **security** of the transaction.
+Another task involved protecting a 100-bit message using exactly 20 protection bits against scattered, non-consecutive errors. Our solution for this can be found in `prvi.ipynb`.
 
-### 1. Protecting Data in Transit
-To guard against bit-flips (SEUs) and burst errors common in network communication, we propose using **Reed-Solomon** and **Golay codes**. These robust codes can handle both single-bit and multi-bit burst errors, making them ideal for securing data as it moves through the network. We also recommend prioritizing optical fiber over copper (Ethernet) and wireless channels to reduce the frequency of errors.
+### The Challenge (1st Channel)
 
-### 2. Protecting Data at Rest
-To prevent corruption in stored data on SSDs and HDDs, we recommend the implementation of **Hamming codes**. They are computationally efficient and highly effective at correcting the single-bit errors that are a common failure mode in storage devices.
+-   **Message bits (n):** 100
+-   **Protection bits (k):** 20
+-   **Max errors (t):** 10
+-   **Error type:** Uniformly random, non-bursty.
 
-By applying the right code to the right problem, our solution creates a resilient and reliable system for handling sensitive financial transactions.
+### Our Solution (`prvi.ipynb`)
+
+We implemented a heuristic, 2D parity check code. The 100 message bits are treated as a 10x10 grid.
+
+*   **Parity Set 1 (10 bits):** Parity bits are calculated for each of the 10 columns.
+*   **Parity Set 2 (10 bits):** A second set of 10 parity bits is calculated along diagonals (using a stride of 11 through the 1D array) to provide a second dimension for error location.
+
+When an error occurs, it will trip one parity check in the first set and one in the second. The intersection of these failing checks can be used to locate and correct single-bit errors. This custom, lightweight approach was designed to fit the specific constraints of the problem.
