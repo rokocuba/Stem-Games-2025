@@ -9,7 +9,7 @@
 **Institution:** University of Zagreb, Faculty of Electrical Engineering and Computing
 
 <p align="center">
-  <img src="images/pic1.jpg" alt="Team Structure" width="700"/>
+  <img src="images/pic1.jpg" alt="Team Structure" width="900"/>
   <br>
   <em>The Winning photo with (from left to right): Myself, Borna and David</em>
 </p>
