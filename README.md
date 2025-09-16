@@ -13,7 +13,6 @@
   <br>
   <em>The Winning photo with (from left to right): Myself, Borna and David</em>
 </p>
----
 
 ## Project Overview
 
